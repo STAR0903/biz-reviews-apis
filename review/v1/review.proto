@@ -126,7 +126,7 @@ message AppealReviewReply {
 	int64 appealID = 1;
 }
 
-// C端审核评价的参数
+// O端审核评价的参数
 message AuditReviewRequest {
 	int64 reviewID = 1 [(validate.rules).int64 = {gt: 0}];
   int32 status = 2 [(validate.rules).int32 = {in:[20,30,40]}];
@@ -134,7 +134,7 @@ message AuditReviewRequest {
 	string opReason = 3 [(validate.rules).string = {min_len: 1}];
 }
 
-// C端审核评价的回复
+// O端审核评价的回复
 message AuditReviewReply {
 	int64 reviewID = 1 [(validate.rules).int64 = {gt: 0}];
 	int32 status = 2 [(validate.rules).int32 = {in:[20,30,40]}];

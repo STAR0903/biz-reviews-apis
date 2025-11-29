@@ -636,7 +636,7 @@ func (x *AppealReviewReply) GetAppealID() int64 {
 	return 0
 }
 
-// C端审核评价的参数
+// O端审核评价的参数
 type AuditReviewRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReviewID      int64                  `protobuf:"varint,1,opt,name=reviewID,proto3" json:"reviewID,omitempty"`
@@ -705,7 +705,7 @@ func (x *AuditReviewRequest) GetOpReason() string {
 	return ""
 }
 
-// C端审核评价的回复
+// O端审核评价的回复
 type AuditReviewReply struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ReviewID      int64                  `protobuf:"varint,1,opt,name=reviewID,proto3" json:"reviewID,omitempty"`
