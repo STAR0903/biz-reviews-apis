@@ -8,15 +8,26 @@ option go_package = "bubble/api/bubble/v1;v1";
 option java_multiple_files = true;
 option java_package = "api.bubble.v1";
 
-// ErrorReason 定义错误码
+// ErrorReason 定义服务返回的业务错误类型，用于生成标准化错误响应。
 enum ErrorReason {
-  // 设置缺省错误码
+  // 默认值，表示未明确指定的错误（HTTP 500）
   option (errors.default_code) = 500;
 
-  // 为某个枚举单独设置错误码
-  DB_FAILED = 0 [(errors.code) = 500];
-  INVALID_PARAM = 1 [(errors.code) = 400];
-  HorizontalPrivilegeEscalation = 20 [(errors.code) = 403];
-  ORDER_REVIEWED = 100 [(errors.code) = 409];
-  ReviewHasReply= 101 [(errors.code) = 409];
+  // --- 通用错误 ---
+  UNSPECIFIED        = 0;  // 未知错误
+  INVALID_PARAM      = 1   [(errors.code) = 400]; // 请求参数无效
+  DB_FAILED          = 2   [(errors.code) = 500]; // 数据库操作失败
+
+  // --- 资源未找到 ---
+  REVIEW_NOT_FOUND   = 10  [(errors.code) = 404]; // 评价不存在
+  APPEAL_NOT_FOUND   = 11  [(errors.code) = 404]; // 申诉不存在
+
+  // --- 权限错误 ---
+  HORIZONTAL_PRIVILEGE_ESCALATION = 20 [(errors.code) = 403]; // 越权访问
+
+  // --- 业务状态冲突 ---
+  ORDER_ALREADY_REVIEWED      = 100 [(errors.code) = 409]; // 订单已评价
+  REVIEW_ALREADY_HAS_REPLY    = 101 [(errors.code) = 409]; // 评价已有回复
+  REVIEW_ALREADY_AUDITED      = 102 [(errors.code) = 409]; // 评价已审核
+  APPEAL_ALREADY_AUDITED      = 103 [(errors.code) = 409]; // 申诉已审核
 }

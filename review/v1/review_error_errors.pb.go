@@ -11,20 +11,21 @@ import (
 // is compatible with the kratos package it is being compiled against.
 const _ = errors.SupportPackageIsVersion1
 
-// 为某个枚举单独设置错误码
-func IsDbFailed(err error) bool {
+// --- 通用错误 ---
+func IsUnspecified(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_DB_FAILED.String() && e.Code == 500
+	return e.Reason == ErrorReason_UNSPECIFIED.String() && e.Code == 500
 }
 
-// 为某个枚举单独设置错误码
-func ErrorDbFailed(format string, args ...interface{}) *errors.Error {
-	return errors.New(500, ErrorReason_DB_FAILED.String(), fmt.Sprintf(format, args...))
+// --- 通用错误 ---
+func ErrorUnspecified(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, ErrorReason_UNSPECIFIED.String(), fmt.Sprintf(format, args...))
 }
 
+// 请求参数无效
 func IsInvalidParam(err error) bool {
 	if err == nil {
 		return false
@@ -33,42 +34,119 @@ func IsInvalidParam(err error) bool {
 	return e.Reason == ErrorReason_INVALID_PARAM.String() && e.Code == 400
 }
 
+// 请求参数无效
 func ErrorInvalidParam(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_INVALID_PARAM.String(), fmt.Sprintf(format, args...))
 }
 
+// 数据库操作失败
+func IsDbFailed(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_DB_FAILED.String() && e.Code == 500
+}
+
+// 数据库操作失败
+func ErrorDbFailed(format string, args ...interface{}) *errors.Error {
+	return errors.New(500, ErrorReason_DB_FAILED.String(), fmt.Sprintf(format, args...))
+}
+
+// --- 资源未找到 ---
+func IsReviewNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_REVIEW_NOT_FOUND.String() && e.Code == 404
+}
+
+// --- 资源未找到 ---
+func ErrorReviewNotFound(format string, args ...interface{}) *errors.Error {
+	return errors.New(404, ErrorReason_REVIEW_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+}
+
+// 申诉不存在
+func IsAppealNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_APPEAL_NOT_FOUND.String() && e.Code == 404
+}
+
+// 申诉不存在
+func ErrorAppealNotFound(format string, args ...interface{}) *errors.Error {
+	return errors.New(404, ErrorReason_APPEAL_NOT_FOUND.String(), fmt.Sprintf(format, args...))
+}
+
+// --- 权限错误 ---
 func IsHorizontalPrivilegeEscalation(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_HorizontalPrivilegeEscalation.String() && e.Code == 403
+	return e.Reason == ErrorReason_HORIZONTAL_PRIVILEGE_ESCALATION.String() && e.Code == 403
 }
 
+// --- 权限错误 ---
 func ErrorHorizontalPrivilegeEscalation(format string, args ...interface{}) *errors.Error {
-	return errors.New(403, ErrorReason_HorizontalPrivilegeEscalation.String(), fmt.Sprintf(format, args...))
+	return errors.New(403, ErrorReason_HORIZONTAL_PRIVILEGE_ESCALATION.String(), fmt.Sprintf(format, args...))
 }
 
-func IsOrderReviewed(err error) bool {
+// --- 业务状态冲突 ---
+func IsOrderAlreadyReviewed(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_ORDER_REVIEWED.String() && e.Code == 409
+	return e.Reason == ErrorReason_ORDER_ALREADY_REVIEWED.String() && e.Code == 409
 }
 
-func ErrorOrderReviewed(format string, args ...interface{}) *errors.Error {
-	return errors.New(409, ErrorReason_ORDER_REVIEWED.String(), fmt.Sprintf(format, args...))
+// --- 业务状态冲突 ---
+func ErrorOrderAlreadyReviewed(format string, args ...interface{}) *errors.Error {
+	return errors.New(409, ErrorReason_ORDER_ALREADY_REVIEWED.String(), fmt.Sprintf(format, args...))
 }
 
-func IsReviewHasReply(err error) bool {
+// 评价已有回复
+func IsReviewAlreadyHasReply(err error) bool {
 	if err == nil {
 		return false
 	}
 	e := errors.FromError(err)
-	return e.Reason == ErrorReason_ReviewHasReply.String() && e.Code == 409
+	return e.Reason == ErrorReason_REVIEW_ALREADY_HAS_REPLY.String() && e.Code == 409
 }
 
-func ErrorReviewHasReply(format string, args ...interface{}) *errors.Error {
-	return errors.New(409, ErrorReason_ReviewHasReply.String(), fmt.Sprintf(format, args...))
+// 评价已有回复
+func ErrorReviewAlreadyHasReply(format string, args ...interface{}) *errors.Error {
+	return errors.New(409, ErrorReason_REVIEW_ALREADY_HAS_REPLY.String(), fmt.Sprintf(format, args...))
+}
+
+// 评价已审核
+func IsReviewAlreadyAudited(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_REVIEW_ALREADY_AUDITED.String() && e.Code == 409
+}
+
+// 评价已审核
+func ErrorReviewAlreadyAudited(format string, args ...interface{}) *errors.Error {
+	return errors.New(409, ErrorReason_REVIEW_ALREADY_AUDITED.String(), fmt.Sprintf(format, args...))
+}
+
+// 申诉已审核
+func IsAppealAlreadyAudited(err error) bool {
+	if err == nil {
+		return false
+	}
+	e := errors.FromError(err)
+	return e.Reason == ErrorReason_APPEAL_ALREADY_AUDITED.String() && e.Code == 409
+}
+
+// 申诉已审核
+func ErrorAppealAlreadyAudited(format string, args ...interface{}) *errors.Error {
+	return errors.New(409, ErrorReason_APPEAL_ALREADY_AUDITED.String(), fmt.Sprintf(format, args...))
 }

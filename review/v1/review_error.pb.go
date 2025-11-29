@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        v6.30.1
-// source: review/v1/review_error.proto
+// source: api/review/v1/review_error.proto
 
 package v1
 
@@ -22,33 +22,51 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ErrorReason 定义错误码
+// ErrorReason 定义服务返回的业务错误类型，用于生成标准化错误响应。
 type ErrorReason int32
 
 const (
-	// 为某个枚举单独设置错误码
-	ErrorReason_DB_FAILED                     ErrorReason = 0
-	ErrorReason_INVALID_PARAM                 ErrorReason = 1
-	ErrorReason_HorizontalPrivilegeEscalation ErrorReason = 20
-	ErrorReason_ORDER_REVIEWED                ErrorReason = 100
-	ErrorReason_ReviewHasReply                ErrorReason = 101
+	// --- 通用错误 ---
+	ErrorReason_UNSPECIFIED   ErrorReason = 0 // 未知错误
+	ErrorReason_INVALID_PARAM ErrorReason = 1 // 请求参数无效
+	ErrorReason_DB_FAILED     ErrorReason = 2 // 数据库操作失败
+	// --- 资源未找到 ---
+	ErrorReason_REVIEW_NOT_FOUND ErrorReason = 10 // 评价不存在
+	ErrorReason_APPEAL_NOT_FOUND ErrorReason = 11 // 申诉不存在
+	// --- 权限错误 ---
+	ErrorReason_HORIZONTAL_PRIVILEGE_ESCALATION ErrorReason = 20 // 越权访问
+	// --- 业务状态冲突 ---
+	ErrorReason_ORDER_ALREADY_REVIEWED   ErrorReason = 100 // 订单已评价
+	ErrorReason_REVIEW_ALREADY_HAS_REPLY ErrorReason = 101 // 评价已有回复
+	ErrorReason_REVIEW_ALREADY_AUDITED   ErrorReason = 102 // 评价已审核
+	ErrorReason_APPEAL_ALREADY_AUDITED   ErrorReason = 103 // 申诉已审核
 )
 
 // Enum value maps for ErrorReason.
 var (
 	ErrorReason_name = map[int32]string{
-		0:   "DB_FAILED",
+		0:   "UNSPECIFIED",
 		1:   "INVALID_PARAM",
-		20:  "HorizontalPrivilegeEscalation",
-		100: "ORDER_REVIEWED",
-		101: "ReviewHasReply",
+		2:   "DB_FAILED",
+		10:  "REVIEW_NOT_FOUND",
+		11:  "APPEAL_NOT_FOUND",
+		20:  "HORIZONTAL_PRIVILEGE_ESCALATION",
+		100: "ORDER_ALREADY_REVIEWED",
+		101: "REVIEW_ALREADY_HAS_REPLY",
+		102: "REVIEW_ALREADY_AUDITED",
+		103: "APPEAL_ALREADY_AUDITED",
 	}
 	ErrorReason_value = map[string]int32{
-		"DB_FAILED":                     0,
-		"INVALID_PARAM":                 1,
-		"HorizontalPrivilegeEscalation": 20,
-		"ORDER_REVIEWED":                100,
-		"ReviewHasReply":                101,
+		"UNSPECIFIED":                     0,
+		"INVALID_PARAM":                   1,
+		"DB_FAILED":                       2,
+		"REVIEW_NOT_FOUND":                10,
+		"APPEAL_NOT_FOUND":                11,
+		"HORIZONTAL_PRIVILEGE_ESCALATION": 20,
+		"ORDER_ALREADY_REVIEWED":          100,
+		"REVIEW_ALREADY_HAS_REPLY":        101,
+		"REVIEW_ALREADY_AUDITED":          102,
+		"APPEAL_ALREADY_AUDITED":          103,
 	}
 )
 
@@ -63,11 +81,11 @@ func (x ErrorReason) String() string {
 }
 
 func (ErrorReason) Descriptor() protoreflect.EnumDescriptor {
-	return file_review_v1_review_error_proto_enumTypes[0].Descriptor()
+	return file_api_review_v1_review_error_proto_enumTypes[0].Descriptor()
 }
 
 func (ErrorReason) Type() protoreflect.EnumType {
-	return &file_review_v1_review_error_proto_enumTypes[0]
+	return &file_api_review_v1_review_error_proto_enumTypes[0]
 }
 
 func (x ErrorReason) Number() protoreflect.EnumNumber {
@@ -76,39 +94,45 @@ func (x ErrorReason) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ErrorReason.Descriptor instead.
 func (ErrorReason) EnumDescriptor() ([]byte, []int) {
-	return file_review_v1_review_error_proto_rawDescGZIP(), []int{0}
+	return file_api_review_v1_review_error_proto_rawDescGZIP(), []int{0}
 }
 
-var File_review_v1_review_error_proto protoreflect.FileDescriptor
+var File_api_review_v1_review_error_proto protoreflect.FileDescriptor
 
-const file_review_v1_review_error_proto_rawDesc = "" +
+const file_api_review_v1_review_error_proto_rawDesc = "" +
 	"\n" +
-	"\x1creview/v1/review_error.proto\x12\rapi.bubble.v1\x1a\x13errors/errors.proto*\x9e\x01\n" +
-	"\vErrorReason\x12\x13\n" +
-	"\tDB_FAILED\x10\x00\x1a\x04\xa8E\xf4\x03\x12\x17\n" +
-	"\rINVALID_PARAM\x10\x01\x1a\x04\xa8E\x90\x03\x12'\n" +
-	"\x1dHorizontalPrivilegeEscalation\x10\x14\x1a\x04\xa8E\x93\x03\x12\x18\n" +
-	"\x0eORDER_REVIEWED\x10d\x1a\x04\xa8E\x99\x03\x12\x18\n" +
-	"\x0eReviewHasReply\x10e\x1a\x04\xa8E\x99\x03\x1a\x04\xa0E\xf4\x03B*\n" +
+	" api/review/v1/review_error.proto\x12\rapi.bubble.v1\x1a\x13errors/errors.proto*\xbf\x02\n" +
+	"\vErrorReason\x12\x0f\n" +
+	"\vUNSPECIFIED\x10\x00\x12\x17\n" +
+	"\rINVALID_PARAM\x10\x01\x1a\x04\xa8E\x90\x03\x12\x13\n" +
+	"\tDB_FAILED\x10\x02\x1a\x04\xa8E\xf4\x03\x12\x1a\n" +
+	"\x10REVIEW_NOT_FOUND\x10\n" +
+	"\x1a\x04\xa8E\x94\x03\x12\x1a\n" +
+	"\x10APPEAL_NOT_FOUND\x10\v\x1a\x04\xa8E\x94\x03\x12)\n" +
+	"\x1fHORIZONTAL_PRIVILEGE_ESCALATION\x10\x14\x1a\x04\xa8E\x93\x03\x12 \n" +
+	"\x16ORDER_ALREADY_REVIEWED\x10d\x1a\x04\xa8E\x99\x03\x12\"\n" +
+	"\x18REVIEW_ALREADY_HAS_REPLY\x10e\x1a\x04\xa8E\x99\x03\x12 \n" +
+	"\x16REVIEW_ALREADY_AUDITED\x10f\x1a\x04\xa8E\x99\x03\x12 \n" +
+	"\x16APPEAL_ALREADY_AUDITED\x10g\x1a\x04\xa8E\x99\x03\x1a\x04\xa0E\xf4\x03B*\n" +
 	"\rapi.bubble.v1P\x01Z\x17bubble/api/bubble/v1;v1b\x06proto3"
 
 var (
-	file_review_v1_review_error_proto_rawDescOnce sync.Once
-	file_review_v1_review_error_proto_rawDescData []byte
+	file_api_review_v1_review_error_proto_rawDescOnce sync.Once
+	file_api_review_v1_review_error_proto_rawDescData []byte
 )
 
-func file_review_v1_review_error_proto_rawDescGZIP() []byte {
-	file_review_v1_review_error_proto_rawDescOnce.Do(func() {
-		file_review_v1_review_error_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_review_v1_review_error_proto_rawDesc), len(file_review_v1_review_error_proto_rawDesc)))
+func file_api_review_v1_review_error_proto_rawDescGZIP() []byte {
+	file_api_review_v1_review_error_proto_rawDescOnce.Do(func() {
+		file_api_review_v1_review_error_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_api_review_v1_review_error_proto_rawDesc), len(file_api_review_v1_review_error_proto_rawDesc)))
 	})
-	return file_review_v1_review_error_proto_rawDescData
+	return file_api_review_v1_review_error_proto_rawDescData
 }
 
-var file_review_v1_review_error_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_review_v1_review_error_proto_goTypes = []any{
+var file_api_review_v1_review_error_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_api_review_v1_review_error_proto_goTypes = []any{
 	(ErrorReason)(0), // 0: api.bubble.v1.ErrorReason
 }
-var file_review_v1_review_error_proto_depIdxs = []int32{
+var file_api_review_v1_review_error_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -116,26 +140,26 @@ var file_review_v1_review_error_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_review_v1_review_error_proto_init() }
-func file_review_v1_review_error_proto_init() {
-	if File_review_v1_review_error_proto != nil {
+func init() { file_api_review_v1_review_error_proto_init() }
+func file_api_review_v1_review_error_proto_init() {
+	if File_api_review_v1_review_error_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_review_v1_review_error_proto_rawDesc), len(file_review_v1_review_error_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_review_v1_review_error_proto_rawDesc), len(file_api_review_v1_review_error_proto_rawDesc)),
 			NumEnums:      1,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_review_v1_review_error_proto_goTypes,
-		DependencyIndexes: file_review_v1_review_error_proto_depIdxs,
-		EnumInfos:         file_review_v1_review_error_proto_enumTypes,
+		GoTypes:           file_api_review_v1_review_error_proto_goTypes,
+		DependencyIndexes: file_api_review_v1_review_error_proto_depIdxs,
+		EnumInfos:         file_api_review_v1_review_error_proto_enumTypes,
 	}.Build()
-	File_review_v1_review_error_proto = out.File
-	file_review_v1_review_error_proto_goTypes = nil
-	file_review_v1_review_error_proto_depIdxs = nil
+	File_api_review_v1_review_error_proto = out.File
+	file_api_review_v1_review_error_proto_goTypes = nil
+	file_api_review_v1_review_error_proto_depIdxs = nil
 }
