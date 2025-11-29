@@ -589,3 +589,730 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ReplyReviewReplyValidationError{}
+
+// Validate checks the field values on GetReviewRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetReviewRequestMultiError, or nil if none found.
+func (m *GetReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetReviewID() <= 0 {
+		err := GetReviewRequestValidationError{
+			field:  "ReviewID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetReviewRequestMultiError is an error wrapping multiple validation errors
+// returned by GetReviewRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetReviewRequestMultiError) AllErrors() []error { return m }
+
+// GetReviewRequestValidationError is the validation error returned by
+// GetReviewRequest.Validate if the designated constraints aren't met.
+type GetReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetReviewRequestValidationError) ErrorName() string { return "GetReviewRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetReviewRequestValidationError{}
+
+// Validate checks the field values on GetReviewReply with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetReviewReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetReviewReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetReviewReplyMultiError,
+// or nil if none found.
+func (m *GetReviewReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetReviewReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetInfo()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetReviewReplyValidationError{
+					field:  "Info",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetReviewReplyValidationError{
+					field:  "Info",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetInfo()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetReviewReplyValidationError{
+				field:  "Info",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetReviewReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetReviewReplyMultiError is an error wrapping multiple validation errors
+// returned by GetReviewReply.ValidateAll() if the designated constraints
+// aren't met.
+type GetReviewReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetReviewReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetReviewReplyMultiError) AllErrors() []error { return m }
+
+// GetReviewReplyValidationError is the validation error returned by
+// GetReviewReply.Validate if the designated constraints aren't met.
+type GetReviewReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetReviewReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetReviewReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetReviewReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetReviewReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetReviewReplyValidationError) ErrorName() string { return "GetReviewReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetReviewReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetReviewReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetReviewReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetReviewReplyValidationError{}
+
+// Validate checks the field values on ReviewInfo with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ReviewInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ReviewInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ReviewInfoMultiError, or
+// nil if none found.
+func (m *ReviewInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ReviewInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserID() <= 0 {
+		err := ReviewInfoValidationError{
+			field:  "UserID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetOrderID() <= 0 {
+		err := ReviewInfoValidationError{
+			field:  "OrderID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _ReviewInfo_Status_InLookup[m.GetStatus()]; !ok {
+		err := ReviewInfoValidationError{
+			field:  "Status",
+			reason: "value must be in list [10 20 30 40]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetScore(); val <= 0 || val >= 5 {
+		err := ReviewInfoValidationError{
+			field:  "Score",
+			reason: "value must be inside range (0, 5)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetServiceScore(); val <= 0 || val >= 5 {
+		err := ReviewInfoValidationError{
+			field:  "ServiceScore",
+			reason: "value must be inside range (0, 5)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetExpressScore(); val <= 0 || val >= 5 {
+		err := ReviewInfoValidationError{
+			field:  "ExpressScore",
+			reason: "value must be inside range (0, 5)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetContent()); l < 1 || l > 255 {
+		err := ReviewInfoValidationError{
+			field:  "Content",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetPicInfo()); l < 0 || l > 255 {
+		err := ReviewInfoValidationError{
+			field:  "PicInfo",
+			reason: "value length must be between 0 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetVideoInfo()); l < 0 || l > 255 {
+		err := ReviewInfoValidationError{
+			field:  "VideoInfo",
+			reason: "value length must be between 0 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Anonymous
+
+	if len(errors) > 0 {
+		return ReviewInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReviewInfoMultiError is an error wrapping multiple validation errors
+// returned by ReviewInfo.ValidateAll() if the designated constraints aren't met.
+type ReviewInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReviewInfoMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReviewInfoMultiError) AllErrors() []error { return m }
+
+// ReviewInfoValidationError is the validation error returned by
+// ReviewInfo.Validate if the designated constraints aren't met.
+type ReviewInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReviewInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReviewInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReviewInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReviewInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReviewInfoValidationError) ErrorName() string { return "ReviewInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ReviewInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReviewInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReviewInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReviewInfoValidationError{}
+
+var _ReviewInfo_Status_InLookup = map[int32]struct{}{
+	10: {},
+	20: {},
+	30: {},
+	40: {},
+}
+
+// Validate checks the field values on AuditReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AuditReviewRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AuditReviewRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AuditReviewRequestMultiError, or nil if none found.
+func (m *AuditReviewRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AuditReviewRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetReviewID() <= 0 {
+		err := AuditReviewRequestValidationError{
+			field:  "ReviewID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _AuditReviewRequest_Status_InLookup[m.GetStatus()]; !ok {
+		err := AuditReviewRequestValidationError{
+			field:  "Status",
+			reason: "value must be in list [10 30 40]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetOpUser()) < 1 {
+		err := AuditReviewRequestValidationError{
+			field:  "OpUser",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetOpReason()) < 1 {
+		err := AuditReviewRequestValidationError{
+			field:  "OpReason",
+			reason: "value length must be at least 1 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return AuditReviewRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AuditReviewRequestMultiError is an error wrapping multiple validation errors
+// returned by AuditReviewRequest.ValidateAll() if the designated constraints
+// aren't met.
+type AuditReviewRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AuditReviewRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AuditReviewRequestMultiError) AllErrors() []error { return m }
+
+// AuditReviewRequestValidationError is the validation error returned by
+// AuditReviewRequest.Validate if the designated constraints aren't met.
+type AuditReviewRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AuditReviewRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AuditReviewRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AuditReviewRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AuditReviewRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AuditReviewRequestValidationError) ErrorName() string {
+	return "AuditReviewRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AuditReviewRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAuditReviewRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AuditReviewRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AuditReviewRequestValidationError{}
+
+var _AuditReviewRequest_Status_InLookup = map[int32]struct{}{
+	10: {},
+	30: {},
+	40: {},
+}
+
+// Validate checks the field values on AuditReviewReply with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AuditReviewReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AuditReviewReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AuditReviewReplyMultiError, or nil if none found.
+func (m *AuditReviewReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AuditReviewReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetReviewID() <= 0 {
+		err := AuditReviewReplyValidationError{
+			field:  "ReviewID",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _AuditReviewReply_Status_InLookup[m.GetStatus()]; !ok {
+		err := AuditReviewReplyValidationError{
+			field:  "Status",
+			reason: "value must be in list [20 30 40]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return AuditReviewReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// AuditReviewReplyMultiError is an error wrapping multiple validation errors
+// returned by AuditReviewReply.ValidateAll() if the designated constraints
+// aren't met.
+type AuditReviewReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AuditReviewReplyMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AuditReviewReplyMultiError) AllErrors() []error { return m }
+
+// AuditReviewReplyValidationError is the validation error returned by
+// AuditReviewReply.Validate if the designated constraints aren't met.
+type AuditReviewReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AuditReviewReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AuditReviewReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AuditReviewReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AuditReviewReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AuditReviewReplyValidationError) ErrorName() string { return "AuditReviewReplyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AuditReviewReplyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAuditReviewReply.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AuditReviewReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AuditReviewReplyValidationError{}
+
+var _AuditReviewReply_Status_InLookup = map[int32]struct{}{
+	20: {},
+	30: {},
+	40: {},
+}
