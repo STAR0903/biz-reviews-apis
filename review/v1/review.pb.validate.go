@@ -79,10 +79,10 @@ func (m *CreateReviewRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetScore(); val <= 0 || val >= 5 {
+	if val := m.GetScore(); val < 0 || val > 5 {
 		err := CreateReviewRequestValidationError{
 			field:  "Score",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
@@ -90,10 +90,10 @@ func (m *CreateReviewRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetServiceScore(); val <= 0 || val >= 5 {
+	if val := m.GetServiceScore(); val < 0 || val > 5 {
 		err := CreateReviewRequestValidationError{
 			field:  "ServiceScore",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
@@ -101,10 +101,10 @@ func (m *CreateReviewRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetExpressScore(); val <= 0 || val >= 5 {
+	if val := m.GetExpressScore(); val < 0 || val > 5 {
 		err := CreateReviewRequestValidationError{
 			field:  "ExpressScore",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
@@ -386,10 +386,10 @@ func (m *ReviewInfo) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetScore(); val <= 0 || val >= 5 {
+	if val := m.GetScore(); val < 0 || val > 5 {
 		err := ReviewInfoValidationError{
 			field:  "Score",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
@@ -397,10 +397,10 @@ func (m *ReviewInfo) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetServiceScore(); val <= 0 || val >= 5 {
+	if val := m.GetServiceScore(); val < 0 || val > 5 {
 		err := ReviewInfoValidationError{
 			field:  "ServiceScore",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
@@ -408,10 +408,10 @@ func (m *ReviewInfo) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if val := m.GetExpressScore(); val <= 0 || val >= 5 {
+	if val := m.GetExpressScore(); val < 0 || val > 5 {
 		err := ReviewInfoValidationError{
 			field:  "ExpressScore",
-			reason: "value must be inside range (0, 5)",
+			reason: "value must be inside range [0, 5]",
 		}
 		if !all {
 			return err
