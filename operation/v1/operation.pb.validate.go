@@ -90,16 +90,7 @@ func (m *AuditReviewRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetOpReason()) < 1 {
-		err := AuditReviewRequestValidationError{
-			field:  "OpReason",
-			reason: "value length must be at least 1 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for OpReason
 
 	if len(errors) > 0 {
 		return AuditReviewRequestMultiError(errors)

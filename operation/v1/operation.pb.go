@@ -271,12 +271,12 @@ var File_api_operation_v1_operation_proto protoreflect.FileDescriptor
 
 const file_api_operation_v1_operation_proto_rawDesc = "" +
 	"\n" +
-	" api/operation/v1/operation.proto\x12\x10api.operation.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\"\xa4\x01\n" +
+	" api/operation/v1/operation.proto\x12\x10api.operation.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x17validate/validate.proto\"\x9b\x01\n" +
 	"\x12AuditReviewRequest\x12#\n" +
 	"\breviewID\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\breviewID\x12#\n" +
 	"\x06status\x18\x02 \x01(\x05B\v\xfaB\b\x1a\x060\x140\x1e0(R\x06status\x12\x1f\n" +
-	"\x06opUser\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x06opUser\x12#\n" +
-	"\bopReason\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\bopReason\"\\\n" +
+	"\x06opUser\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x10\x01R\x06opUser\x12\x1a\n" +
+	"\bopReason\x18\x03 \x01(\tR\bopReason\"\\\n" +
 	"\x10AuditReviewReply\x12#\n" +
 	"\breviewID\x18\x01 \x01(\x03B\a\xfaB\x04\"\x02 \x00R\breviewID\x12#\n" +
 	"\x06status\x18\x02 \x01(\x05B\v\xfaB\b\x1a\x060\x140\x1e0(R\x06status\"\xae\x01\n" +
