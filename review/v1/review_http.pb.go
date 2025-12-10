@@ -23,7 +23,9 @@ const OperationReviewAppealReview = "/api.review.v1.Review/AppealReview"
 const OperationReviewAuditAppeal = "/api.review.v1.Review/AuditAppeal"
 const OperationReviewAuditReview = "/api.review.v1.Review/AuditReview"
 const OperationReviewCreateReview = "/api.review.v1.Review/CreateReview"
+const OperationReviewGetHotKeywords = "/api.review.v1.Review/GetHotKeywords"
 const OperationReviewGetReview = "/api.review.v1.Review/GetReview"
+const OperationReviewListReviews = "/api.review.v1.Review/ListReviews"
 const OperationReviewReplyReview = "/api.review.v1.Review/ReplyReview"
 
 type ReviewHTTPServer interface {
@@ -35,8 +37,12 @@ type ReviewHTTPServer interface {
 	AuditReview(context.Context, *AuditReviewRequest) (*AuditReviewReply, error)
 	// CreateReview C端创建评价
 	CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewReply, error)
-	// GetReview C端获取评价详情
+	// GetHotKeywords C端获取热门评价关键词
+	GetHotKeywords(context.Context, *GetHotKeywordsRequest) (*GetHotKeywordsReply, error)
+	// GetReview C端获取评价
 	GetReview(context.Context, *GetReviewRequest) (*GetReviewReply, error)
+	// ListReviews C端获取某个SPU的评价列表
+	ListReviews(context.Context, *ListReviewsRequest) (*ListReviewsReply, error)
 	// ReplyReview B端回复评价
 	ReplyReview(context.Context, *ReplyReviewRequest) (*ReplyReviewReply, error)
 }
@@ -45,6 +51,8 @@ func RegisterReviewHTTPServer(s *http.Server, srv ReviewHTTPServer) {
 	r := s.Route("/")
 	r.POST("/v1/review", _Review_CreateReview0_HTTP_Handler(srv))
 	r.GET("/v1/review/{reviewID}", _Review_GetReview0_HTTP_Handler(srv))
+	r.GET("/v1/review/list/{spuID}", _Review_ListReviews0_HTTP_Handler(srv))
+	r.GET("/v1/review/hot-keywords/{spuID}", _Review_GetHotKeywords0_HTTP_Handler(srv))
 	r.POST("/v1/review/reply", _Review_ReplyReview1_HTTP_Handler(srv))
 	r.POST("/v1/review/appeal", _Review_AppealReview1_HTTP_Handler(srv))
 	r.POST("/v1/review/audit", _Review_AuditReview1_HTTP_Handler(srv))
@@ -91,6 +99,50 @@ func _Review_GetReview0_HTTP_Handler(srv ReviewHTTPServer) func(ctx http.Context
 			return err
 		}
 		reply := out.(*GetReviewReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Review_ListReviews0_HTTP_Handler(srv ReviewHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListReviewsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReviewListReviews)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListReviews(ctx, req.(*ListReviewsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListReviewsReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Review_GetHotKeywords0_HTTP_Handler(srv ReviewHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetHotKeywordsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationReviewGetHotKeywords)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetHotKeywords(ctx, req.(*GetHotKeywordsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*GetHotKeywordsReply)
 		return ctx.Result(200, reply)
 	}
 }
@@ -192,8 +244,12 @@ type ReviewHTTPClient interface {
 	AuditReview(ctx context.Context, req *AuditReviewRequest, opts ...http.CallOption) (rsp *AuditReviewReply, err error)
 	// CreateReview C端创建评价
 	CreateReview(ctx context.Context, req *CreateReviewRequest, opts ...http.CallOption) (rsp *CreateReviewReply, err error)
-	// GetReview C端获取评价详情
+	// GetHotKeywords C端获取热门评价关键词
+	GetHotKeywords(ctx context.Context, req *GetHotKeywordsRequest, opts ...http.CallOption) (rsp *GetHotKeywordsReply, err error)
+	// GetReview C端获取评价
 	GetReview(ctx context.Context, req *GetReviewRequest, opts ...http.CallOption) (rsp *GetReviewReply, err error)
+	// ListReviews C端获取某个SPU的评价列表
+	ListReviews(ctx context.Context, req *ListReviewsRequest, opts ...http.CallOption) (rsp *ListReviewsReply, err error)
 	// ReplyReview B端回复评价
 	ReplyReview(ctx context.Context, req *ReplyReviewRequest, opts ...http.CallOption) (rsp *ReplyReviewReply, err error)
 }
@@ -262,12 +318,40 @@ func (c *ReviewHTTPClientImpl) CreateReview(ctx context.Context, in *CreateRevie
 	return &out, nil
 }
 
-// GetReview C端获取评价详情
+// GetHotKeywords C端获取热门评价关键词
+func (c *ReviewHTTPClientImpl) GetHotKeywords(ctx context.Context, in *GetHotKeywordsRequest, opts ...http.CallOption) (*GetHotKeywordsReply, error) {
+	var out GetHotKeywordsReply
+	pattern := "/v1/review/hot-keywords/{spuID}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReviewGetHotKeywords))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetReview C端获取评价
 func (c *ReviewHTTPClientImpl) GetReview(ctx context.Context, in *GetReviewRequest, opts ...http.CallOption) (*GetReviewReply, error) {
 	var out GetReviewReply
 	pattern := "/v1/review/{reviewID}"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationReviewGetReview))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ListReviews C端获取某个SPU的评价列表
+func (c *ReviewHTTPClientImpl) ListReviews(ctx context.Context, in *ListReviewsRequest, opts ...http.CallOption) (*ListReviewsReply, error) {
+	var out ListReviewsReply
+	pattern := "/v1/review/list/{spuID}"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationReviewListReviews))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

@@ -18,10 +18,22 @@ service Review {
 			body: "*"
 		};
 	}
-	// C端获取评价详情
+	// C端获取评价
 	rpc GetReview(GetReviewRequest) returns (GetReviewReply){
 		option (google.api.http) = {
 			get: "/v1/review/{reviewID}"
+		};
+	}
+	// C端获取某个SPU的评价列表
+	rpc ListReviews (ListReviewsRequest) returns (ListReviewsReply){
+		option (google.api.http) = {
+			get: "/v1/review/list/{spuID}"
+		};
+	}
+	// C端获取热门评价关键词
+	rpc GetHotKeywords (GetHotKeywordsRequest) returns (GetHotKeywordsReply){
+		option (google.api.http) = {
+			get: "/v1/review/hot-keywords/{spuID}"
 		};
 	}
 	// B端回复评价
@@ -87,14 +99,64 @@ message ReviewInfo {
 	bool anonymous = 10 ;
 }
 
-// C端获取评价详情的参数
+// C端获取评价的参数
 message GetReviewRequest {
 	int64 reviewID = 1 [(validate.rules).int64 = {gt: 0}];
 }
 
-// C端获取评价详情的回复
+// C端获取评价的回复
 message GetReviewReply {
 	ReviewInfo info = 1;
+}
+
+// C端获取某个SPU的评价列表的参数
+message ListReviewsRequest {
+	int64 spuID = 1 [(validate.rules).int64 = {gt: 0}];
+	int32 size = 2 [(validate.rules).int32 = {gte: 0, lte: 100}];
+	string pageToken = 3 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	string sortBy = 4 [(validate.rules).string = {in:["default","latest","score_desc","score_asc"]}];
+	repeated string tags = 5 ;
+}
+
+message ReviewDetail {
+	int64 userID = 1 [(validate.rules).int64 = {gt: 0}];
+	int64 orderID = 2 [(validate.rules).int64 = {gt: 0}];
+	int32 score = 3 [(validate.rules).int32 = {gte: 0, lte: 5}];
+	int32 serviceScore = 4 [(validate.rules).int32 = {gte: 0, lte: 5}];
+	int32 expressScore = 5 [(validate.rules).int32 = {gte: 0, lte: 5}];
+	string content = 6 [(validate.rules).string = {min_len: 1, max_len: 255}];
+	string picInfo = 7 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	string videoInfo = 8 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	string createTime = 9 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	string updateTime = 10 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	bool anonymous = 11 ;
+	Reply reply = 12;
+	message Reply {
+		string content = 3 [(validate.rules).string = {min_len: 1, max_len: 255}];
+		string picInfo = 4 [(validate.rules).string = {min_len: 0, max_len: 255}];
+		string videoInfo = 5 [(validate.rules).string = {min_len: 0, max_len: 255}];
+		string createTime = 6 [(validate.rules).string = {min_len: 0, max_len: 255}];
+	}
+}
+
+// C端获取某个SPU的评价列表的回复
+message ListReviewsReply {
+	repeated ReviewDetail reviews = 1;
+	string nextPageToken = 2 [(validate.rules).string = {min_len: 0, max_len: 255}];
+}
+
+// C端获取热门评价关键词的参数
+message GetHotKeywordsRequest {
+	int64 spuID = 1 [(validate.rules).int64 = {gt: 0}];
+}
+
+// C端获取热门评价关键词的回复
+message GetHotKeywordsReply {
+	message Keyword {
+		string keyword = 1 [(validate.rules).string = {min_len: 1, max_len: 255}];
+		int64 count = 2 [(validate.rules).int64 = {gt: 0}];
+	}
+	repeated Keyword keywords = 1;
 }
 
 // B端回复评价的参数

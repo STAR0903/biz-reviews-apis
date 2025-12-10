@@ -19,12 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Review_CreateReview_FullMethodName = "/api.review.v1.Review/CreateReview"
-	Review_GetReview_FullMethodName    = "/api.review.v1.Review/GetReview"
-	Review_ReplyReview_FullMethodName  = "/api.review.v1.Review/ReplyReview"
-	Review_AppealReview_FullMethodName = "/api.review.v1.Review/AppealReview"
-	Review_AuditReview_FullMethodName  = "/api.review.v1.Review/AuditReview"
-	Review_AuditAppeal_FullMethodName  = "/api.review.v1.Review/AuditAppeal"
+	Review_CreateReview_FullMethodName   = "/api.review.v1.Review/CreateReview"
+	Review_GetReview_FullMethodName      = "/api.review.v1.Review/GetReview"
+	Review_ListReviews_FullMethodName    = "/api.review.v1.Review/ListReviews"
+	Review_GetHotKeywords_FullMethodName = "/api.review.v1.Review/GetHotKeywords"
+	Review_ReplyReview_FullMethodName    = "/api.review.v1.Review/ReplyReview"
+	Review_AppealReview_FullMethodName   = "/api.review.v1.Review/AppealReview"
+	Review_AuditReview_FullMethodName    = "/api.review.v1.Review/AuditReview"
+	Review_AuditAppeal_FullMethodName    = "/api.review.v1.Review/AuditAppeal"
 )
 
 // ReviewClient is the client API for Review service.
@@ -35,8 +37,12 @@ const (
 type ReviewClient interface {
 	// C端创建评价
 	CreateReview(ctx context.Context, in *CreateReviewRequest, opts ...grpc.CallOption) (*CreateReviewReply, error)
-	// C端获取评价详情
+	// C端获取评价
 	GetReview(ctx context.Context, in *GetReviewRequest, opts ...grpc.CallOption) (*GetReviewReply, error)
+	// C端获取某个SPU的评价列表
+	ListReviews(ctx context.Context, in *ListReviewsRequest, opts ...grpc.CallOption) (*ListReviewsReply, error)
+	// C端获取热门评价关键词
+	GetHotKeywords(ctx context.Context, in *GetHotKeywordsRequest, opts ...grpc.CallOption) (*GetHotKeywordsReply, error)
 	// B端回复评价
 	ReplyReview(ctx context.Context, in *ReplyReviewRequest, opts ...grpc.CallOption) (*ReplyReviewReply, error)
 	// B端申诉评价
@@ -69,6 +75,26 @@ func (c *reviewClient) GetReview(ctx context.Context, in *GetReviewRequest, opts
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetReviewReply)
 	err := c.cc.Invoke(ctx, Review_GetReview_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reviewClient) ListReviews(ctx context.Context, in *ListReviewsRequest, opts ...grpc.CallOption) (*ListReviewsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListReviewsReply)
+	err := c.cc.Invoke(ctx, Review_ListReviews_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reviewClient) GetHotKeywords(ctx context.Context, in *GetHotKeywordsRequest, opts ...grpc.CallOption) (*GetHotKeywordsReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetHotKeywordsReply)
+	err := c.cc.Invoke(ctx, Review_GetHotKeywords_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -123,8 +149,12 @@ func (c *reviewClient) AuditAppeal(ctx context.Context, in *AuditAppealRequest, 
 type ReviewServer interface {
 	// C端创建评价
 	CreateReview(context.Context, *CreateReviewRequest) (*CreateReviewReply, error)
-	// C端获取评价详情
+	// C端获取评价
 	GetReview(context.Context, *GetReviewRequest) (*GetReviewReply, error)
+	// C端获取某个SPU的评价列表
+	ListReviews(context.Context, *ListReviewsRequest) (*ListReviewsReply, error)
+	// C端获取热门评价关键词
+	GetHotKeywords(context.Context, *GetHotKeywordsRequest) (*GetHotKeywordsReply, error)
 	// B端回复评价
 	ReplyReview(context.Context, *ReplyReviewRequest) (*ReplyReviewReply, error)
 	// B端申诉评价
@@ -148,6 +178,12 @@ func (UnimplementedReviewServer) CreateReview(context.Context, *CreateReviewRequ
 }
 func (UnimplementedReviewServer) GetReview(context.Context, *GetReviewRequest) (*GetReviewReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetReview not implemented")
+}
+func (UnimplementedReviewServer) ListReviews(context.Context, *ListReviewsRequest) (*ListReviewsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListReviews not implemented")
+}
+func (UnimplementedReviewServer) GetHotKeywords(context.Context, *GetHotKeywordsRequest) (*GetHotKeywordsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetHotKeywords not implemented")
 }
 func (UnimplementedReviewServer) ReplyReview(context.Context, *ReplyReviewRequest) (*ReplyReviewReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReplyReview not implemented")
@@ -214,6 +250,42 @@ func _Review_GetReview_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReviewServer).GetReview(ctx, req.(*GetReviewRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Review_ListReviews_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListReviewsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReviewServer).ListReviews(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Review_ListReviews_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReviewServer).ListReviews(ctx, req.(*ListReviewsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Review_GetHotKeywords_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHotKeywordsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReviewServer).GetHotKeywords(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Review_GetHotKeywords_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReviewServer).GetHotKeywords(ctx, req.(*GetHotKeywordsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -304,6 +376,14 @@ var Review_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetReview",
 			Handler:    _Review_GetReview_Handler,
+		},
+		{
+			MethodName: "ListReviews",
+			Handler:    _Review_ListReviews_Handler,
+		},
+		{
+			MethodName: "GetHotKeywords",
+			Handler:    _Review_GetHotKeywords_Handler,
 		},
 		{
 			MethodName: "ReplyReview",
